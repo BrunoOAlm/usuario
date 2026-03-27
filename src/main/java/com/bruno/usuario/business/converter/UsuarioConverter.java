@@ -6,9 +6,11 @@ import com.bruno.usuario.business.dto.UsuarioDTO;
 import com.bruno.usuario.infrastructure.entity.Endereco;
 import com.bruno.usuario.infrastructure.entity.Telefone;
 import com.bruno.usuario.infrastructure.entity.Usuario;
+import lombok.Builder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
 
 @Component
 public class UsuarioConverter {
