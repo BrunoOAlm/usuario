@@ -13,7 +13,7 @@ import com.bruno.usuario.infrastructure.repository.EnderecoRepository;
 import com.bruno.usuario.infrastructure.repository.TelefoneRepository;
 import com.bruno.usuario.infrastructure.repository.UsuarioRepository;
 import com.bruno.usuario.infrastructure.security.JwtUtil;
-import lombok.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @RequiredArgsConstructor
-
 
 public class UsuarioService {
 
@@ -113,47 +112,26 @@ public class UsuarioService {
 
     }
 
-    public EnderecoDTO cadastraEndereco(String token, EnderecoDTO dto){
-
-        // Extrai o email do token (remove "Bearer ")
+    public EnderecoDTO cadastraEndereco (String token,EnderecoDTO dto){
         String email = jwtUtil.extrairEmailToken(token.substring(7));
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException("Email não localizado " + email));
 
-        // Busca o usuário
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-
-        // Converte DTO -> Entity
-        Endereco endereco = usuarioConverter.paraEndereco(dto);
-
-        // Associa com o usuário
-        endereco.setUsuario(usuario);
-
-        // Salva no banco
-        return usuarioConverter.paraEnderecoDTO(
-                enderecoRepository.save(endereco)
-        );
+       Endereco endereco= usuarioConverter.paraEnderecoEntity(dto, usuario.getId());
+       Endereco enderecoEntity = enderecoRepository.save(endereco);
+       return usuarioConverter.paraEnderecoDTO(enderecoEntity);
     }
 
-    public TelefoneDTO cadastraTelefone(String token, TelefoneDTO dto){
-
-        // Extrai o email do token
+    public TelefoneDTO cadastraTelefone (String token,TelefoneDTO dto){
         String email = jwtUtil.extrairEmailToken(token.substring(7));
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException("Email não localizado " + email));
 
-        // Busca o usuário
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-
-        // Converte DTO -> Entity
-        Telefone telefone = usuarioConverter.paraTelefone(dto);
-
-        // Associa com o usuário
-        telefone.setUsuario(usuario);
-
-        // Salva no banco
+        Telefone telefone= usuarioConverter.paraTelefoneEntity(dto, usuario.getId());
         return usuarioConverter.paraTelefoneDTO(
                 telefoneRepository.save(telefone)
         );
-    }
 
+    }
 
 }
