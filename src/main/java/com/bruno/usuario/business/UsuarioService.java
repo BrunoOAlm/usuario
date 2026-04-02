@@ -13,7 +13,7 @@ import com.bruno.usuario.infrastructure.repository.EnderecoRepository;
 import com.bruno.usuario.infrastructure.repository.TelefoneRepository;
 import com.bruno.usuario.infrastructure.repository.UsuarioRepository;
 import com.bruno.usuario.infrastructure.security.JwtUtil;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @RequiredArgsConstructor
+
 
 public class UsuarioService {
 
@@ -111,5 +112,48 @@ public class UsuarioService {
         return usuarioConverter.paraTelefoneDTO(telefoneRepository.save(telefone));
 
     }
+
+    public EnderecoDTO cadastraEndereco(String token, EnderecoDTO dto){
+
+        // Extrai o email do token (remove "Bearer ")
+        String email = jwtUtil.extrairEmailToken(token.substring(7));
+
+        // Busca o usuário
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        // Converte DTO -> Entity
+        Endereco endereco = usuarioConverter.paraEndereco(dto);
+
+        // Associa com o usuário
+        endereco.setUsuario(usuario);
+
+        // Salva no banco
+        return usuarioConverter.paraEnderecoDTO(
+                enderecoRepository.save(endereco)
+        );
+    }
+
+    public TelefoneDTO cadastraTelefone(String token, TelefoneDTO dto){
+
+        // Extrai o email do token
+        String email = jwtUtil.extrairEmailToken(token.substring(7));
+
+        // Busca o usuário
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        // Converte DTO -> Entity
+        Telefone telefone = usuarioConverter.paraTelefone(dto);
+
+        // Associa com o usuário
+        telefone.setUsuario(usuario);
+
+        // Salva no banco
+        return usuarioConverter.paraTelefoneDTO(
+                telefoneRepository.save(telefone)
+        );
+    }
+
 
 }
