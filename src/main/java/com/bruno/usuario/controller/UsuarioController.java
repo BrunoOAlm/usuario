@@ -1,17 +1,16 @@
 package com.bruno.usuario.controller;
 
 import com.bruno.usuario.business.UsuarioService;
+import com.bruno.usuario.business.ViaCepService;
 import com.bruno.usuario.business.dto.EnderecoDTO;
 import com.bruno.usuario.business.dto.TelefoneDTO;
 import com.bruno.usuario.business.dto.UsuarioDTO;
-import com.bruno.usuario.infrastructure.entity.Telefone;
-import com.bruno.usuario.infrastructure.entity.Usuario;
 import com.bruno.usuario.infrastructure.security.JwtUtil;
 import com.bruno.usuario.infrastructure.security.SecurityConfig;
+import com.bruno.usuario.infrastructure.security.clients.ViaCepDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +28,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final ViaCepService viaCepService;
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> salvaUsuario(@RequestBody UsuarioDTO usuarioDTO){
@@ -83,6 +83,12 @@ public class UsuarioController {
     public ResponseEntity<TelefoneDTO> cadastraTelefone(@RequestBody TelefoneDTO dto,
                                                         @RequestHeader("Authorization") String token){
         return ResponseEntity.ok(usuarioService.cadastraTelefone(token,dto));
+    }
+
+    @GetMapping("/endereco/{cep}")
+
+    public ResponseEntity<ViaCepDTO> buscarDadosCep(@PathVariable("cep") String cep){
+        return ResponseEntity.ok(viaCepService.buscarDadosEndereco(cep));
     }
 
 
