@@ -17,10 +17,15 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	set('springCloudVersion', "2023.0.3") // ✅ versão compatível
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	runtimeOnly 'org.postgresql:postgresql'
 
@@ -35,6 +40,12 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
 }
 
 tasks.named('test') {
