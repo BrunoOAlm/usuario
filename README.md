@@ -41,3 +41,26 @@ Este serviço faz parte do conjunto de microsserviços do sistema Agendador de T
 - Git / GitHub  
 -Docker
 -Documentado pelo Swagger
+
+## 📌 Estrutura do projeto
+
+
+controller/
+service/
+repository/
+entity/
+dto/
+
+
+---
+
+## 📌 Objetivo do projeto
+
+Este microsserviço foi desenvolvido para praticar arquitetura de microsserviços, com foco em separação de responsabilidades e independência entre serviços.
+
+---
+
+## 📌 Autor
+
+Desenvolvido por Bruno Almeida  
+Projeto de estudo em microsserviços e backend Java
