@@ -1,32 +1,29 @@
 package com.bruno.usuario.business;
 
-import com.bruno.usuario.infrastructure.security.clients.ViaCepClient;
-import com.bruno.usuario.infrastructure.security.clients.ViaCepDTO;
+import com.bruno.usuario.infrastructure.clients.ViaCepClient;
+import com.bruno.usuario.infrastructure.clients.ViaCepDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class ViaCepService {
 
-    private final ViaCepClient client;
+    private final ViaCepClient viaCepClient;
 
     public ViaCepDTO buscarDadosEndereco(String cep) {
-        return client.buscaDadosEndereco(processarCep(cep));
-
+        String cepFormatado = processarCep(cep);
+        return viaCepClient.buscarCep(cepFormatado);
     }
 
     private String processarCep(String cep) {
-        String cepFormatado = cep.replace(" ", "").
-                replace("-", "");
+        String cepFormatado = cep.replace(" ", "")
+                                 .replace("-", "");
 
-        if (!cepFormatado.matches("\\d+") || !Objects.equals(cepFormatado.length(), 8)) {
-            throw new IllegalArgumentException("O CEP contém caracteres inválido , favor verificar.");
+        if (!cepFormatado.matches("\\d{8}")) {
+            throw new IllegalArgumentException("CEP inválido, deve conter 8 números.");
         }
 
         return cepFormatado;
     }
 }
-
