@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.5'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id "org.sonarqube" version "5.0.0.4638"
 }
 
 group = 'com.bruno'
@@ -18,28 +19,7 @@ repositories {
 }
 
 ext {
-	set('springCloudVersion', "2023.0.3") // ✅ versão compatível
-}
-
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-
-	runtimeOnly 'org.postgresql:postgresql'
-
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-	implementation("io.jsonwebtoken:jjwt-api:0.13.0")
-	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
-	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
-
-	compileOnly 'org.projectlombok:lombok:1.18.30'
-	annotationProcessor 'org.projectlombok:lombok:1.18.30'
-
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+	set('springCloudVersion', "2023.0.3")
 }
 
 dependencyManagement {
@@ -48,6 +28,41 @@ dependencyManagement {
 	}
 }
 
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// FEIGN
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	// DB
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// JWT
+	implementation "io.jsonwebtoken:jjwt-api:0.13.0"
+	runtimeOnly "io.jsonwebtoken:jjwt-impl:0.13.0"
+	runtimeOnly "io.jsonwebtoken:jjwt-jackson:0.13.0"
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.30'
+	annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+	// Swagger
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0"
+
+	// Testes
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectKey", "usuario"
+		property "sonar.host.url", "http://localhost:9000"
+	}
 }
